@@ -1,0 +1,87 @@
+<head>
+<link rel="stylesheet" href="styles/objects.css">
+<link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+	<p id="debug">Debug</p>
+	<div class="timer"></div>
+</body>
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<!-- the script the moves things around -->
+<script src="js/animations.js"></script>
+<!-- the script that does certain things like start the timer, display the next level, etc. -->
+<script src="js/events.js"></script>
+<script>
+
+	//declare time related variables
+	var level={
+		time:10*1000,
+		timeDelta:1000,
+		score:0
+	}
+	var obstacle={
+		size:50,
+		sizeDelta:2,
+		speed:5*1000,
+		speedDelta:500,
+		amount:5
+	};
+	var token={
+		size:50,
+		sizeDelta:2,
+		amount:5
+	}
+	//declare boundries of the x and the y
+	var X_BOUND=700;
+	var Y_BOUND=500;
+	//do all the steps necessary for making a new level
+	function newLevel(){
+		resetTimer();
+		if(level.time > 5000)
+			level.time-=level.timeDelta;
+		startTimer(level.time, function(){lose("Time's up!")});
+
+		$(".token").show();
+		place_all(token.amount, "token", X_BOUND, Y_BOUND);
+		if(token.size > 35){
+			token.size-=token.sizeDelta;
+		}
+		transform($(".token"), token.size, token.size);
+
+		stop_all(obstacle.amount, "obstacle");
+		if(obstacle.speed > 2000){
+			obstacle.speed-=obstacle.speedDelta;
+		}
+		shift_all(obstacle.amount, "obstacle", X_BOUND, Y_BOUND, obstacle.speed);
+	}
+	//do all the steps necessary to lose
+	function lose(lossMessage){
+		alert(lossMessage);
+	}
+	$(document).ready(function(){
+		var obstacles=populate(obstacle.amount, "obstacle");
+		var tokens=populate(token.amount, "token");
+
+		place_all(token.amount, "token", X_BOUND, Y_BOUND);
+		shift_all(obstacle.amount, "obstacle", X_BOUND, Y_BOUND,obstacle.speed)
+
+		changeBackground();
+		startTimer(level.time, function(){lose("Time's up!")});
+		$("*").mousemove(function(){
+			//Removed the puck
+			// followMouse(event.pageX, event.pageY);
+			$("p").text(JSON.stringify(level)+", "+JSON.stringify(obstacle)+", "+JSON.stringify(token));
+		});
+		$(".token").mouseover(function(){
+			$(this).hide();
+			level.score+=1;
+			if(level.score % token.amount == 0){
+				newLevel();
+			}
+		});
+		$(".obstacle").mouseover(function(){
+			lose("You've been hit!");
+		});
+	})
+</script>
