@@ -1,6 +1,6 @@
 //Changes the background color to a random color. If an rgb value is put in, then the background will animate to that color
-function changeBackground(r, g, b){
-	$("body").animate({backgroundColor:"rgb("+((Math.round(Math.random()*150))+75)+","+((Math.round(Math.random()*150))+75)+","+((Math.round(Math.random()*150))+75)+")"}, 1500);
+function changeBackground(r, g, b, t){
+	$("body").animate({backgroundColor:"rgb("+((Math.round(Math.random()*150))+75)+","+((Math.round(Math.random()*150))+75)+","+((Math.round(Math.random()*150))+75)+")"}, t);
 }
 
 function startTimer(t, endFunction){
@@ -30,6 +30,7 @@ function checkIntersection(arr, p){
 	}
 	return $("")
 }
+//collision function that I don't know how to use.
 function collision($div1, $div2) {
       var x1 = $div1.offset().left;
       var y1 = $div1.offset().top;

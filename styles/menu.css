@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css?family=Lemon|Kavoon');
+h1{
+	font-family: 'Lemon', cursive;
+	color:white;
+	text-shadow:1px 1px 3px black;
+	letter-spacing: 5px;
+	font-size: 100px;
+}
+h2{
+	font-family: 'Kavoon', cursive;
+	color:white;
+	text-shadow:1px 1px 3px black;
+	font-size: 50px;
+}
+.option{
+
+}
+.menu-button{
+	
+}
+#game-container{
+	display:none;
+}
+#menu-container{
+
+}
+.selectable:hover{
+	color:lightgray;
+}

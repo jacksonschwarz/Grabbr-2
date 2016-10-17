@@ -1,10 +1,15 @@
 <head>
 <link rel="stylesheet" href="styles/objects.css">
 <link rel="stylesheet" href="styles/styles.css">
+<link rel="stylesheet" href="styles/menu.css">
 </head>
 <body>
-	<p id="debug">Debug</p>
-	<div class="timer"></div>
+	<div id="menu-container">
+	</div>
+	<div id="game-container">
+		<p id="debug">Debug</p>
+		<div class="timer"></div>
+	</div>
 </body>
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/jquery-ui.min.js"></script>
@@ -12,11 +17,13 @@
 <script src="js/animations.js"></script>
 <!-- the script that does certain things like start the timer, display the next level, etc. -->
 <script src="js/events.js"></script>
+<!-- related to menu functions -->
+<script src="js/menu.js"></script>
 <script>
 
 	//declare time related variables
 	var level={
-		time:10*1000,
+		time:12*1000,
 		timeDelta:1000,
 		score:0
 	}
@@ -25,7 +32,7 @@
 		sizeDelta:2,
 		speed:5*1000,
 		speedDelta:500,
-		amount:5
+		amount:7
 	};
 	var token={
 		size:50,
@@ -37,51 +44,99 @@
 	var Y_BOUND=500;
 	//do all the steps necessary for making a new level
 	function newLevel(){
+		changeBackground(1000);
+		//resets the timer, lessens the time for each level, the restarts it.
 		resetTimer();
-		if(level.time > 5000)
+		if(level.time > 4000)
 			level.time-=level.timeDelta;
 		startTimer(level.time, function(){lose("Time's up!")});
 
+		//Reshows hidden tokens, places them in random locations again, and shrinks the token size if it is greater than 35 pixels
 		$(".token").show();
 		place_all(token.amount, "token", X_BOUND, Y_BOUND);
-		if(token.size > 35){
+		if(token.size > 30){
 			token.size-=token.sizeDelta;
 		}
 		transform($(".token"), token.size, token.size);
 
+		//Stops all the obstacles in their tracks, increases the speed of the obstacles, and starts all of the obstacles again.
 		stop_all(obstacle.amount, "obstacle");
-		if(obstacle.speed > 2000){
+		if(obstacle.speed > 1500){
 			obstacle.speed-=obstacle.speedDelta;
 		}
 		shift_all(obstacle.amount, "obstacle", X_BOUND, Y_BOUND, obstacle.speed);
 	}
 	//do all the steps necessary to lose
 	function lose(lossMessage){
-		alert(lossMessage);
+		//stop all the obstacles
+		$(".obstacle").stop();
+		//show the menu panel
+		$("#menu-container").show();
+		//stop and reset the timer
+		$(".timer").stop();
+		$(".timer").css({height:"10px"});
+		//show the menu panel associated with losing
+		showLoss(lossMessage);
+		//remove the obstacles and tokens from the DOM
+		$(".obstacle").remove();
+		$(".token").remove();
+		//reset all the stats about the game
+		level={
+			time:12*1000,
+			timeDelta:1000,
+			score:0
+		}
+		obstacle={
+			size:50,
+			sizeDelta:2,
+			speed:5*1000,
+			speedDelta:500,
+			amount:7
+		};
+		token={
+			size:50,
+			sizeDelta:2,
+			amount:5
+		}
+		//listen for the play button to be clicked again, to that it will run.
+		$("#play-button").click(function(){
+			run();
+		});
+	}
+	//runs the game
+	function run(){
+			$("#menu-container").hide();
+			$("#game-container").show();
+			var tokens=populate(token.amount, "token");
+			var obstacles=populate(obstacle.amount, "obstacle");
+
+			place_all(token.amount, "token", X_BOUND, Y_BOUND);
+			place_all(obstacle.amount, "obstacle", X_BOUND, Y_BOUND);
+			shift_all(obstacle.amount, "obstacle", X_BOUND, Y_BOUND,obstacle.speed)
+			startTimer(level.time, function(){lose("Time's up!")});
+			$("*").mousemove(function(){
+				//Removed the puck
+				// followMouse(event.pageX, event.pageY);
+				//debug information
+				$("p").text(JSON.stringify(level)+", "+JSON.stringify(obstacle)+", "+JSON.stringify(token));
+			});
+			$(".token").mouseover(function(){
+				$(this).hide();
+				level.score+=1;
+				if(level.score % token.amount == 0){
+					newLevel();
+				}
+			});
+			$(".obstacle").mouseover(function(){
+				lose("You've been hit!");
+			});
 	}
 	$(document).ready(function(){
-		var obstacles=populate(obstacle.amount, "obstacle");
-		var tokens=populate(token.amount, "token");
+		changeBackground(100);
+		showTitle();
+		$("#play-button").click(function(){
+			run();
+		})
 
-		place_all(token.amount, "token", X_BOUND, Y_BOUND);
-		shift_all(obstacle.amount, "obstacle", X_BOUND, Y_BOUND,obstacle.speed)
-
-		changeBackground();
-		startTimer(level.time, function(){lose("Time's up!")});
-		$("*").mousemove(function(){
-			//Removed the puck
-			// followMouse(event.pageX, event.pageY);
-			$("p").text(JSON.stringify(level)+", "+JSON.stringify(obstacle)+", "+JSON.stringify(token));
-		});
-		$(".token").mouseover(function(){
-			$(this).hide();
-			level.score+=1;
-			if(level.score % token.amount == 0){
-				newLevel();
-			}
-		});
-		$(".obstacle").mouseover(function(){
-			lose("You've been hit!");
-		});
 	})
 </script>

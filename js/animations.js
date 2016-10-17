@@ -2,7 +2,7 @@
 function populate(n, type){
 	var r=[]
 	for (var i=0;i<n;i++){
-		$("body").append("<div class='"+type+"' id='"+type+i+"'></div>")
+		$("#game-container").append("<div class='"+type+"' id='"+type+i+"'></div>")
 		r.push($("#"+type+i));
 	}
 	return r;
@@ -11,6 +11,7 @@ function populate(n, type){
 function place(o, x, y){
 	o.css("left", Math.round(Math.random()*x));
 	o.css("top", Math.round(Math.random() *y));
+	// o.animate({"left":Math.round(Math.random()*x), "top":Math.round(Math.random() *y)}, 100);
 }
 //places (n) objects at a random point within the bounds of x and y
 function place_all(n, type, x, y){
