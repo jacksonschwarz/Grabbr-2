@@ -2,7 +2,7 @@
 function populate(n, type){
 	var r=[]
 	for (var i=0;i<n;i++){
-		$("#game-container").append("<div class='"+type+"' id='"+type+i+"'></div>")
+		$("#"+type+"-container").append("<div class='"+type+"' id='"+type+i+"'></div>")
 		r.push($("#"+type+i));
 	}
 	return r;
