@@ -7,10 +7,11 @@ function showTitle(){
 		<h2 id="play-button" class="selectable">Play</h2>
 		`);
 }
-function showLoss(lossMessage){
+function showLoss(lossMessage, finalScore){
 	$("#game-container").hide();
 	$("#menu-container").html(`
+		<h3>Final score: `+finalScore+`</h3>
 		<h1>`+lossMessage+`</h1>
-			<h2 id="play-button" class="selectable">Play again?</h2>
+		<h2 id="play-button" class="selectable">Play again</h2>
 	`)
 }

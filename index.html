@@ -7,7 +7,8 @@
 	<div id="menu-container">
 	</div>
 	<div id="game-container">
-		<p id="debug">Debug</p>
+		<p id="debug"></p>
+		<h3 id="score-tracker">Score: 0</h3>
 		<div class="timer"></div>
 		<div id="token-container"></div>
 		<div id="obstacle-container"></div>
@@ -26,19 +27,19 @@
 	//declare time related variables
 	var level={
 		time:12*1000,
-		timeDelta:1000,
+		timeDelta:500,
 		score:0
 	}
 	var obstacle={
 		size:50,
 		sizeDelta:2,
 		speed:5*1000,
-		speedDelta:500,
+		speedDelta:250,
 		amount:7
 	};
 	var token={
 		size:50,
-		sizeDelta:2,
+		sizeDelta:1,
 		amount:5
 	}
 	//declare boundries of the x and the y
@@ -70,6 +71,7 @@
 	}
 	//do all the steps necessary to lose
 	function lose(lossMessage){
+		$("#score-tracker").html('<h3 id="score-tracker">Score: 0</h3>');
 		//stop all the obstacles
 		$(".obstacle").stop();
 		//show the menu panel
@@ -78,26 +80,26 @@
 		$(".timer").stop();
 		$(".timer").css({height:"10px"});
 		//show the menu panel associated with losing
-		showLoss(lossMessage);
+		showLoss(lossMessage, level.score);
 		//remove the obstacles and tokens from the DOM
 		$(".obstacle").remove();
 		$(".token").remove();
 		//reset all the stats about the game
 		level={
 			time:12*1000,
-			timeDelta:1000,
+			timeDelta:500,
 			score:0
-		}
+		};
 		obstacle={
 			size:50,
 			sizeDelta:2,
 			speed:5*1000,
-			speedDelta:500,
+			speedDelta:250,
 			amount:7
 		};
 		token={
 			size:50,
-			sizeDelta:2,
+			sizeDelta:1,
 			amount:5
 		};
 		//listen for the play button to be clicked again, to that it will run.
@@ -123,12 +125,14 @@
 				//Removed the puck
 				// followMouse(event.pageX, event.pageY);
 				//debug information
-				$("p").text(JSON.stringify(level)+", "+JSON.stringify(obstacle)+", "+JSON.stringify(token));
+				// $("p").text(JSON.stringify(level)+", "+JSON.stringify(obstacle)+", "+JSON.stringify(token));
 			});
 
 			$(".token").mouseover(function(){
 				$(this).hide();
 				level.score+=1;
+				//update the score tracker
+				$("#score-tracker").html("<h3 id='score-tracker'>Score: "+level.score+"</h3>");
 				//if there are no more tokens left, get a new level ready.
 				if(level.score % token.amount == 0){
 					newLevel();
