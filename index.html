@@ -10,6 +10,7 @@
 		<p id="debug"></p>
 		<h3 id="score-tracker">Score: 0</h3>
 		<div class="timer"></div>
+		<div class="player"></div>
 		<div id="token-container"></div>
 		<div id="obstacle-container"></div>
 	</div>
@@ -28,7 +29,8 @@
 	var level={
 		time:12*1000,
 		timeDelta:500,
-		score:0
+		score:0,
+		playerActive: false
 	}
 	var obstacle={
 		size:50,
@@ -88,7 +90,8 @@
 		level={
 			time:12*1000,
 			timeDelta:500,
-			score:0
+			score:0,
+			playerActive:false
 		};
 		obstacle={
 			size:50,
@@ -116,35 +119,41 @@
 			var obstacles=populate(obstacle.amount, "obstacle");
 
 			//place the tokens and shift the obstacles
+			place_all(obstacle.amount, "obstacle", X_BOUND, Y_BOUND, obstacle.speed);
 			place_all(token.amount, "token", X_BOUND, Y_BOUND);
 			shift_all(obstacle.amount, "obstacle", X_BOUND, Y_BOUND,obstacle.speed)
 			//start the timer
 			startTimer(level.time, function(){lose("Time's up!")});
-			//debug things. When I add the puck this will be more useful.
-			$("*").mousemove(function(){
-				//Removed the puck
-				// followMouse(event.pageX, event.pageY);
-				//debug information
-				// $("p").text(JSON.stringify(level)+", "+JSON.stringify(obstacle)+", "+JSON.stringify(token));
-			});
 
-			$(".token").mouseover(function(){
-				$(this).hide();
-				level.score+=1;
-				//update the score tracker
-				$("#score-tracker").html("<h3 id='score-tracker'>Score: "+level.score+"</h3>");
-				//if there are no more tokens left, get a new level ready.
-				if(level.score % token.amount == 0){
-					newLevel();
-				}
-			});
-			$(".obstacle").mouseover(function(){
-				lose("You've been hit!");
-			});
+				$(".token").mouseover(function(){
+					if(level.playerActive){
+						$(this).hide();
+						level.score+=1;
+						//update the score tracker
+						$("#score-tracker").html("<h3 id='score-tracker'>Score: "+level.score+"</h3>");
+						//if there are no more tokens left, get a new level ready.
+						if(level.score % token.amount == 0){
+							newLevel();
+						}
+					}
+				});
+				$(".obstacle").mouseover(function(){
+					if(level.playerActive){
+						lose("You've been hit!");
+					}
+				});
 	}
 	$(document).ready(function(){
 		changeBackground(100);
 		showTitle();
+		$(".player").draggable({
+			start:function(){
+				level.playerActive=true;
+			},
+			stop:function(){
+				level.playerActive=false;
+			}
+		});
 		$("#play-button").click(function(){
 			run();
 		})
